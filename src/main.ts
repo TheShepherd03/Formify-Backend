@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { validateEnv } from './config/env.validation';
+import { validateEnv } from './config';
 
 async function bootstrap() {
   // Validate environment variables before starting the application

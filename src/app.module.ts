@@ -6,7 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { FormsModule } from './forms/forms.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import configuration from './config/configuration';
+import configuration from './config';
 
 @Module({
   imports: [
