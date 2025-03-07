@@ -7,10 +7,18 @@ import { JwtPayload } from '../interfaces/user.interface';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
+    const jwtSecret = configService.get<string>('jwt.secret') || 
+                     configService.get<string>('JWT_SECRET') || 
+                     'super-secret-key';
+                     
+    if (jwtSecret === 'super-secret-key') {
+      console.warn('WARNING: Using default JWT secret. This is insecure for production environments.');
+    }
+    
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET') || 'super-secret-key',
+      secretOrKey: jwtSecret,
     });
   }
 

@@ -10,15 +10,20 @@ export class DatabaseService implements OnModuleInit {
   constructor(private configService: ConfigService) {}
 
   onModuleInit() {
-    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
-    const supabaseKey = this.configService.get<string>('SUPABASE_KEY');
+    const supabaseUrl = this.configService.get<string>('database.supabaseUrl') || 
+                        this.configService.get<string>('SUPABASE_URL');
+    const supabaseKey = this.configService.get<string>('database.supabaseKey') || 
+                        this.configService.get<string>('SUPABASE_KEY');
     
-    this.logger.log('Initializing Supabase with URL:', supabaseUrl);
-    this.logger.log('Using Supabase key starting with:', supabaseKey?.substring(0, 20));
+    this.logger.log('Initializing Supabase connection');
     
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Supabase URL and key must be provided');
+      this.logger.error('Missing Supabase configuration');
+      throw new Error('Supabase URL and key must be provided. Check your environment variables.');
     }
+    
+    // Only log part of the key for security
+    this.logger.log(`Connected to Supabase at ${supabaseUrl} with key starting with: ${supabaseKey.substring(0, 5)}...`);
     
     this.supabase = createClient(supabaseUrl, supabaseKey, {
       auth: {
