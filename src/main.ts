@@ -2,11 +2,33 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { validateEnv } from './config';
+
+// Inline environment validation function
+function validateEnvironment(): void {
+  const logger = new Logger('EnvironmentValidator');
+  const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_KEY', 'JWT_SECRET'];
+  const missingEnvVars = requiredEnvVars.filter(
+    (envVar) => !process.env[envVar]
+  );
+
+  if (missingEnvVars.length > 0) {
+    logger.warn(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
+    logger.warn('Application may not function correctly without these variables.');
+    
+    // For production, throw an error instead
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        `Missing required environment variables for production: ${missingEnvVars.join(', ')}`
+      );
+    }
+  } else {
+    logger.log('All required environment variables are set');
+  }
+}
 
 async function bootstrap() {
   // Validate environment variables before starting the application
-  validateEnv();
+  validateEnvironment();
   
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
