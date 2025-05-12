@@ -37,7 +37,14 @@ async function bootstrap() {
   // Get port from configuration with fallback to 3000
   const port = configService.get<number>('port') || 3000;
   
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'http://localhost:4200',
+      'https://formify-repia.vercel.app'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true,
